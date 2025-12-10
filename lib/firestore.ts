@@ -376,8 +376,17 @@ export const saveRestoreRequest = async (userId: string, request: {
 export const getRestoreRequests = async (userId: string) => {
   try {
     const requestsRef = collection(db, 'users', userId, 'restoreRequests');
-    const q = query(requestsRef, orderBy('createdAt', 'desc'));
-    const querySnapshot = await getDocs(q);
+    
+    // 인덱스 오류를 방지하기 위해 orderBy 없이 먼저 시도
+    let querySnapshot;
+    try {
+      const q = query(requestsRef, orderBy('createdAt', 'desc'));
+      querySnapshot = await getDocs(q);
+    } catch (indexError: any) {
+      // 인덱스 오류인 경우 orderBy 없이 가져오기
+      console.warn('Firestore 인덱스 오류, orderBy 없이 가져옵니다:', indexError);
+      querySnapshot = await getDocs(requestsRef);
+    }
     
     const requests: any[] = [];
     querySnapshot.forEach((doc) => {
@@ -390,10 +399,18 @@ export const getRestoreRequests = async (userId: string) => {
       });
     });
     
+    // 클라이언트 사이드에서 정렬 (인덱스가 없는 경우)
+    requests.sort((a, b) => {
+      const dateA = a.createdAt instanceof Date ? a.createdAt.getTime() : 0;
+      const dateB = b.createdAt instanceof Date ? b.createdAt.getTime() : 0;
+      return dateB - dateA; // 내림차순
+    });
+    
     return requests;
   } catch (error: any) {
     console.error('복원 요청 목록 불러오기 오류:', error);
-    throw error;
+    // 에러가 발생해도 빈 배열 반환 (페이지가 렌더링되도록)
+    return [];
   }
 };
 

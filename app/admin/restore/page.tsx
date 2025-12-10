@@ -292,7 +292,7 @@ export default function AdminRestorePage() {
                             onClick={() => {
                               const message = prompt('거부 사유를 입력하세요:');
                               if (message) {
-                                updateRequestStatus(request.userId, request.id, 'failed', undefined, message);
+                                updateRequestStatus(request.userId, request.id, 'failed', undefined, message || undefined);
                               }
                             }}
                             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium"
@@ -309,7 +309,7 @@ export default function AdminRestorePage() {
                               const animationUrl = prompt('완성된 애니메이션 URL을 입력하세요:');
                               const message = prompt('완료 메시지를 입력하세요 (선택사항):');
                               if (animationUrl) {
-                                updateRequestStatus(request.userId, request.id, 'completed', animationUrl, message);
+                                updateRequestStatus(request.userId, request.id, 'completed', animationUrl, message || undefined);
                               }
                             }}
                             className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
@@ -320,7 +320,7 @@ export default function AdminRestorePage() {
                             onClick={() => {
                               const message = prompt('실패 사유를 입력하세요:');
                               if (message) {
-                                updateRequestStatus(request.userId, request.id, 'failed', undefined, message);
+                                updateRequestStatus(request.userId, request.id, 'failed', undefined, message || undefined);
                               }
                             }}
                             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium"

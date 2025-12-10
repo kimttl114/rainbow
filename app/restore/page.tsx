@@ -40,8 +40,8 @@ export default function RestorePage() {
     }
 
     if (user && !authLoading) {
-      loadPetInfo();
-      loadRestoreRequests();
+      loadPetInfo().catch(console.error);
+      loadRestoreRequests().catch(console.error);
     }
   }, [user, authLoading, router]);
 
@@ -69,8 +69,13 @@ export default function RestorePage() {
     try {
       const requestsData = await getRestoreRequests(user.uid);
       setRequests(requestsData as RestoreRequest[]);
-    } catch (error) {
+    } catch (error: any) {
       console.error('복원 요청 불러오기 오류:', error);
+      // Firestore 인덱스 오류인 경우 빈 배열로 설정
+      if (error?.code === 'failed-precondition' || error?.code === 'unavailable') {
+        console.warn('Firestore 인덱스가 필요할 수 있습니다. 빈 배열로 설정합니다.');
+        setRequests([]);
+      }
     } finally {
       setLoadingRequests(false);
     }
@@ -255,10 +260,10 @@ export default function RestorePage() {
           {/* 제출 버튼 */}
           <button
             onClick={handleSubmit}
-            disabled={!selectedPhoto || submitting}
+            disabled={!selectedPhoto}
             className="w-full px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {submitting ? '제출 중...' : '✨ 복원 요청 제출'}
+            💬 카카오톡으로 복원 요청하기
           </button>
         </div>
 

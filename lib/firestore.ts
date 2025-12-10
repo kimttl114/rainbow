@@ -350,4 +350,51 @@ export const getGifts = async (userId: string, limitCount: number = 50) => {
   }
 };
 
+// AI 복원 요청 저장
+export const saveRestoreRequest = async (userId: string, request: {
+  petName: string;
+  photoUrl: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+}) => {
+  try {
+    const requestsRef = collection(db, 'users', userId, 'restoreRequests');
+    const requestRef = doc(requestsRef);
+    
+    await setDoc(requestRef, {
+      ...request,
+      createdAt: Timestamp.now(),
+    });
+    
+    return requestRef.id;
+  } catch (error: any) {
+    console.error('복원 요청 저장 오류:', error);
+    throw error;
+  }
+};
+
+// AI 복원 요청 목록 가져오기
+export const getRestoreRequests = async (userId: string) => {
+  try {
+    const requestsRef = collection(db, 'users', userId, 'restoreRequests');
+    const q = query(requestsRef, orderBy('createdAt', 'desc'));
+    const querySnapshot = await getDocs(q);
+    
+    const requests: any[] = [];
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      requests.push({
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        completedAt: data.completedAt?.toDate() || undefined,
+      });
+    });
+    
+    return requests;
+  } catch (error: any) {
+    console.error('복원 요청 목록 불러오기 오류:', error);
+    throw error;
+  }
+};
+
 

@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/AuthProvider';
-import { collection, getDocs, updateDoc, doc, query, orderBy, where } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc, query, orderBy, where, addDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Timestamp } from 'firebase/firestore';
 
@@ -19,12 +19,31 @@ interface RestoreRequest {
   message?: string;
 }
 
+interface SampleAnimation {
+  id: string;
+  title: string;
+  videoUrl: string;
+  thumbnailUrl?: string;
+  description?: string;
+  createdAt: Date;
+}
+
 export default function AdminRestorePage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [requests, setRequests] = useState<RestoreRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'processing' | 'completed'>('all');
+  const [sampleAnimations, setSampleAnimations] = useState<SampleAnimation[]>([]);
+  const [loadingSamples, setLoadingSamples] = useState(false);
+  const [showSampleForm, setShowSampleForm] = useState(false);
+  const [editingSample, setEditingSample] = useState<SampleAnimation | null>(null);
+  const [sampleForm, setSampleForm] = useState({
+    title: '',
+    videoUrl: '',
+    thumbnailUrl: '',
+    description: '',
+  });
 
   // 관리자 체크 (실제로는 환경 변수나 Firestore에서 관리자 목록 확인)
   const isAdmin = user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL || 
@@ -43,6 +62,7 @@ export default function AdminRestorePage() {
         return;
       }
       loadAllRequests();
+      loadSampleAnimations();
     }
   }, [user, authLoading, router, isAdmin]);
 
@@ -115,6 +135,119 @@ export default function AdminRestorePage() {
     }
   };
 
+  const loadSampleAnimations = async () => {
+    setLoadingSamples(true);
+    try {
+      const samplesRef = collection(db, 'sampleAnimations');
+      const q = query(samplesRef, orderBy('createdAt', 'desc'));
+      const querySnapshot = await getDocs(q);
+      
+      const samples: SampleAnimation[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        samples.push({
+          id: doc.id,
+          title: data.title || '샘플 애니메이션',
+          videoUrl: data.videoUrl,
+          thumbnailUrl: data.thumbnailUrl,
+          description: data.description,
+          createdAt: data.createdAt?.toDate() || new Date(),
+        });
+      });
+      
+      setSampleAnimations(samples);
+    } catch (error) {
+      console.error('샘플 애니메이션 불러오기 오류:', error);
+    } finally {
+      setLoadingSamples(false);
+    }
+  };
+
+  const handleAddSample = async () => {
+    if (!sampleForm.title || !sampleForm.videoUrl) {
+      alert('제목과 비디오 URL은 필수입니다.');
+      return;
+    }
+
+    try {
+      const samplesRef = collection(db, 'sampleAnimations');
+      await addDoc(samplesRef, {
+        title: sampleForm.title,
+        videoUrl: sampleForm.videoUrl,
+        thumbnailUrl: sampleForm.thumbnailUrl || '',
+        description: sampleForm.description || '',
+        createdAt: Timestamp.now(),
+      });
+      
+      alert('샘플 애니메이션이 추가되었습니다.');
+      setSampleForm({ title: '', videoUrl: '', thumbnailUrl: '', description: '' });
+      setShowSampleForm(false);
+      loadSampleAnimations();
+    } catch (error) {
+      console.error('샘플 추가 오류:', error);
+      alert('샘플 추가에 실패했습니다.');
+    }
+  };
+
+  const handleEditSample = async () => {
+    if (!editingSample || !sampleForm.title || !sampleForm.videoUrl) {
+      alert('제목과 비디오 URL은 필수입니다.');
+      return;
+    }
+
+    try {
+      const sampleRef = doc(db, 'sampleAnimations', editingSample.id);
+      await updateDoc(sampleRef, {
+        title: sampleForm.title,
+        videoUrl: sampleForm.videoUrl,
+        thumbnailUrl: sampleForm.thumbnailUrl || '',
+        description: sampleForm.description || '',
+      });
+      
+      alert('샘플 애니메이션이 수정되었습니다.');
+      setEditingSample(null);
+      setSampleForm({ title: '', videoUrl: '', thumbnailUrl: '', description: '' });
+      setShowSampleForm(false);
+      loadSampleAnimations();
+    } catch (error) {
+      console.error('샘플 수정 오류:', error);
+      alert('샘플 수정에 실패했습니다.');
+    }
+  };
+
+  const handleDeleteSample = async (sampleId: string) => {
+    if (!confirm('정말 이 샘플을 삭제하시겠습니까?')) {
+      return;
+    }
+
+    try {
+      const sampleRef = doc(db, 'sampleAnimations', sampleId);
+      await deleteDoc(sampleRef);
+      alert('샘플 애니메이션이 삭제되었습니다.');
+      loadSampleAnimations();
+    } catch (error) {
+      console.error('샘플 삭제 오류:', error);
+      alert('샘플 삭제에 실패했습니다.');
+    }
+  };
+
+  const openEditForm = (sample: SampleAnimation) => {
+    setEditingSample(sample);
+    setSampleForm({
+      title: sample.title,
+      videoUrl: sample.videoUrl,
+      thumbnailUrl: sample.thumbnailUrl || '',
+      description: sample.description || '',
+    });
+    setShowSampleForm(true);
+  };
+
+  const cancelForm = () => {
+    setShowSampleForm(false);
+    setEditingSample(null);
+    setSampleForm({ title: '', videoUrl: '', thumbnailUrl: '', description: '' });
+  };
+
   const filteredRequests = filter === 'all' 
     ? requests 
     : requests.filter(r => r.status === filter);
@@ -151,6 +284,152 @@ export default function AdminRestorePage() {
           <p className="text-white/90 drop-shadow-lg">
             사용자들의 복원 요청을 관리하고 처리하세요
           </p>
+        </div>
+
+        {/* 샘플 애니메이션 관리 섹션 */}
+        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-semibold text-gray-800">✨ 샘플 애니메이션 관리</h2>
+            <button
+              onClick={() => {
+                setShowSampleForm(!showSampleForm);
+                if (showSampleForm) {
+                  cancelForm();
+                }
+              }}
+              className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm font-medium"
+            >
+              {showSampleForm ? '취소' : '+ 새 샘플 추가'}
+            </button>
+          </div>
+
+          {/* 샘플 추가/수정 폼 */}
+          {showSampleForm && (
+            <div className="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
+              <h3 className="font-semibold text-purple-800 mb-4">
+                {editingSample ? '샘플 수정' : '샘플 추가'}
+              </h3>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    제목 <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={sampleForm.title}
+                    onChange={(e) => setSampleForm({ ...sampleForm, title: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="예: 강아지 뛰는 모습"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    비디오 URL <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="url"
+                    value={sampleForm.videoUrl}
+                    onChange={(e) => setSampleForm({ ...sampleForm, videoUrl: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="https://example.com/video.mp4"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    썸네일 URL (선택)
+                  </label>
+                  <input
+                    type="url"
+                    value={sampleForm.thumbnailUrl}
+                    onChange={(e) => setSampleForm({ ...sampleForm, thumbnailUrl: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="https://example.com/thumbnail.jpg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    설명 (선택)
+                  </label>
+                  <textarea
+                    value={sampleForm.description}
+                    onChange={(e) => setSampleForm({ ...sampleForm, description: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    rows={3}
+                    placeholder="샘플에 대한 설명을 입력하세요"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={editingSample ? handleEditSample : handleAddSample}
+                    className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors font-medium"
+                  >
+                    {editingSample ? '수정하기' : '추가하기'}
+                  </button>
+                  <button
+                    onClick={cancelForm}
+                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors font-medium"
+                  >
+                    취소
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 샘플 목록 */}
+          {loadingSamples ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto"></div>
+              <p className="mt-2 text-gray-600">로딩 중...</p>
+            </div>
+          ) : sampleAnimations.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              등록된 샘플이 없습니다.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {sampleAnimations.map((sample) => (
+                <div
+                  key={sample.id}
+                  className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+                >
+                  {sample.thumbnailUrl ? (
+                    <div className="relative w-full aspect-video bg-gray-100">
+                      <img
+                        src={sample.thumbnailUrl}
+                        alt={sample.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="relative w-full aspect-video bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
+                      <span className="text-4xl">🎬</span>
+                    </div>
+                  )}
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-800 mb-1">{sample.title}</h3>
+                    {sample.description && (
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">{sample.description}</p>
+                    )}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => openEditForm(sample)}
+                        className="flex-1 px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
+                      >
+                        수정
+                      </button>
+                      <button
+                        onClick={() => handleDeleteSample(sample.id)}
+                        className="flex-1 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* 필터 */}

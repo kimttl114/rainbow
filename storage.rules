@@ -1,0 +1,12 @@
+// Firebase Storage 보안 규칙
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // 사용자 사진 폴더
+    match /users/{userId}/photos/{fileName} {
+      // 사용자는 자신의 사진만 업로드/다운로드/삭제 가능
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+

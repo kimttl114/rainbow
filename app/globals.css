@@ -1,0 +1,637 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* 무지개 배경 */
+.sky-background {
+  background: linear-gradient(to bottom, 
+    #FF6B6B 0%, 
+    #FF8E53 14%, 
+    #FFA500 28%, 
+    #FFD93D 42%, 
+    #6BCF7F 56%, 
+    #4D96FF 70%, 
+    #9B59B6 84%, 
+    #E91E63 100%);
+  position: relative;
+  overflow: hidden;
+  background-size: 100% 200%;
+  animation: rainbow-shift 10s ease-in-out infinite;
+}
+
+@keyframes rainbow-shift {
+  0%, 100% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 0% 100%;
+  }
+}
+
+/* 구름 애니메이션 */
+.cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50px;
+  opacity: 0.5;
+  animation: float 20s infinite ease-in-out;
+  z-index: 1;
+}
+
+.cloud:before,
+.cloud:after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50px;
+}
+
+.cloud:before {
+  width: 50px;
+  height: 50px;
+  top: -25px;
+  left: 10px;
+}
+
+.cloud:after {
+  width: 60px;
+  height: 60px;
+  top: -30px;
+  right: 10px;
+}
+
+.cloud1 {
+  width: 100px;
+  height: 40px;
+  top: 10%;
+  left: -100px;
+  animation: float 25s infinite ease-in-out;
+}
+
+.cloud2 {
+  width: 120px;
+  height: 50px;
+  top: 20%;
+  left: -120px;
+  animation: float 30s infinite ease-in-out 5s;
+}
+
+.cloud3 {
+  width: 80px;
+  height: 35px;
+  top: 30%;
+  left: -80px;
+  animation: float 35s infinite ease-in-out 10s;
+}
+
+@keyframes float {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  50% {
+    transform: translateX(calc(100vw + 200px)) translateY(-20px);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+}
+
+/* 별 애니메이션 */
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 3s infinite ease-in-out;
+}
+
+.star:before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: white;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.star:after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  background: white;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* 무지개 효과 */
+.rainbow-gradient {
+  background: linear-gradient(to right,
+    #FF0000 0%,
+    #FF7F00 14.28%,
+    #FFFF00 28.56%,
+    #00FF00 42.84%,
+    #0000FF 57.12%,
+    #4B0082 71.4%,
+    #9400D3 85.68%,
+    #FF0000 100%);
+  background-size: 200% 100%;
+  animation: rainbow 5s linear infinite;
+}
+
+@keyframes rainbow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* 무지개 아치 */
+.rainbow-arc {
+  position: absolute;
+  width: 100%;
+  height: 300px;
+  top: -50px;
+  left: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.rainbow-arc::before {
+  content: '';
+  position: absolute;
+  width: 150%;
+  height: 300px;
+  border-radius: 50%;
+  border: 12px solid;
+  border-color: #FF0000 #FF7F00 #FFFF00 #00FF00 #0000FF #4B0082 #9400D3;
+  top: -150px;
+  left: -25%;
+  opacity: 0.6;
+  animation: rainbow-arc 8s ease-in-out infinite;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+.rainbow-arc::after {
+  content: '';
+  position: absolute;
+  width: 150%;
+  height: 300px;
+  border-radius: 50%;
+  border: 8px solid;
+  border-color: #FF6B6B #FF8E53 #FFD93D #6BCF7F #4D96FF #9B59B6 #E91E63;
+  top: -140px;
+  left: -25%;
+  opacity: 0.4;
+  animation: rainbow-arc 8s ease-in-out infinite 0.5s;
+}
+
+@keyframes rainbow-arc {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(30px) scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+/* 천국 빛 효과 */
+.heaven-light {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at center,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 200, 0.2) 30%,
+    transparent 70%);
+  animation: light-shimmer 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes light-shimmer {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+/* 반려동물 애니메이션 - 더 생생하게 */
+.pet-character {
+  position: absolute;
+  font-size: 3rem;
+  pointer-events: auto;
+  z-index: 5;
+  user-select: none;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  will-change: transform, left, top;
+  cursor: pointer;
+}
+
+.pet-character:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.pet-character-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* 실제 걷기 효과 - 다리 움직임 시뮬레이션 */
+@keyframes pet-walk-realistic {
+  0% {
+    left: -15%;
+    bottom: 8%;
+    transform: scaleX(1) translateY(0) rotate(0deg);
+  }
+  10% {
+    transform: scaleX(1) translateY(-8px) rotate(-2deg);
+  }
+  20% {
+    transform: scaleX(1) translateY(0) rotate(2deg);
+  }
+  30% {
+    transform: scaleX(1) translateY(-6px) rotate(-1deg);
+  }
+  40% {
+    transform: scaleX(1) translateY(0) rotate(1deg);
+  }
+  50% {
+    left: 115%;
+    bottom: 8%;
+    transform: scaleX(-1) translateY(0) rotate(0deg);
+  }
+  60% {
+    transform: scaleX(-1) translateY(-8px) rotate(2deg);
+  }
+  70% {
+    transform: scaleX(-1) translateY(0) rotate(-2deg);
+  }
+  80% {
+    transform: scaleX(-1) translateY(-6px) rotate(1deg);
+  }
+  90% {
+    transform: scaleX(-1) translateY(0) rotate(-1deg);
+  }
+  100% {
+    left: -15%;
+    bottom: 8%;
+    transform: scaleX(1) translateY(0) rotate(0deg);
+  }
+}
+
+/* 애교쟁이 - 활발하게 뛰어다님 */
+@keyframes pet-walk-sweet {
+  0% {
+    left: -15%;
+    bottom: 8%;
+    transform: scaleX(1) translateY(0) rotate(-3deg);
+  }
+  8% {
+    transform: scaleX(1) translateY(-15px) rotate(3deg);
+  }
+  16% {
+    transform: scaleX(1) translateY(-5px) rotate(-3deg);
+  }
+  24% {
+    transform: scaleX(1) translateY(-12px) rotate(3deg);
+  }
+  32% {
+    transform: scaleX(1) translateY(-3px) rotate(-2deg);
+  }
+  40% {
+    transform: scaleX(1) translateY(-10px) rotate(2deg);
+  }
+  50% {
+    left: 115%;
+    bottom: 8%;
+    transform: scaleX(-1) translateY(0) rotate(3deg);
+  }
+  58% {
+    transform: scaleX(-1) translateY(-15px) rotate(-3deg);
+  }
+  66% {
+    transform: scaleX(-1) translateY(-5px) rotate(3deg);
+  }
+  74% {
+    transform: scaleX(-1) translateY(-12px) rotate(-3deg);
+  }
+  82% {
+    transform: scaleX(-1) translateY(-3px) rotate(2deg);
+  }
+  90% {
+    transform: scaleX(-1) translateY(-10px) rotate(-2deg);
+  }
+  100% {
+    left: -15%;
+    bottom: 8%;
+    transform: scaleX(1) translateY(0) rotate(-3deg);
+  }
+}
+
+/* 시크 - 차분하게 걷기 */
+@keyframes pet-walk-cool {
+  0% {
+    left: -15%;
+    bottom: 10%;
+    transform: scaleX(1) translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: scaleX(1) translateY(-3px) rotate(0deg);
+  }
+  50% {
+    left: 115%;
+    bottom: 10%;
+    transform: scaleX(-1) translateY(0) rotate(0deg);
+  }
+  75% {
+    transform: scaleX(-1) translateY(-3px) rotate(0deg);
+  }
+  100% {
+    left: -15%;
+    bottom: 10%;
+    transform: scaleX(1) translateY(0) rotate(0deg);
+  }
+}
+
+/* 의젓한 - 안정적으로 걷기 */
+@keyframes pet-walk-mature {
+  0% {
+    left: -15%;
+    bottom: 10%;
+    transform: scaleX(1) translateY(0) rotate(0deg);
+  }
+  12.5% {
+    transform: scaleX(1) translateY(-4px) rotate(-1deg);
+  }
+  25% {
+    transform: scaleX(1) translateY(0) rotate(1deg);
+  }
+  37.5% {
+    transform: scaleX(1) translateY(-4px) rotate(-1deg);
+  }
+  50% {
+    left: 115%;
+    bottom: 10%;
+    transform: scaleX(-1) translateY(0) rotate(0deg);
+  }
+  62.5% {
+    transform: scaleX(-1) translateY(-4px) rotate(1deg);
+  }
+  75% {
+    transform: scaleX(-1) translateY(0) rotate(-1deg);
+  }
+  87.5% {
+    transform: scaleX(-1) translateY(-4px) rotate(1deg);
+  }
+  100% {
+    left: -15%;
+    bottom: 10%;
+    transform: scaleX(1) translateY(0) rotate(0deg);
+  }
+}
+
+/* 소심 - 조심스럽게 걷기 */
+@keyframes pet-walk-shy {
+  0% {
+    left: -15%;
+    bottom: 6%;
+    transform: scaleX(1) translateY(0) rotate(0deg) scale(0.85);
+    opacity: 0.8;
+  }
+  12.5% {
+    transform: scaleX(1) translateY(-2px) rotate(-1deg) scale(0.85);
+    opacity: 0.85;
+  }
+  25% {
+    transform: scaleX(1) translateY(0) rotate(1deg) scale(0.85);
+    opacity: 0.8;
+  }
+  50% {
+    left: 115%;
+    bottom: 6%;
+    transform: scaleX(-1) translateY(0) rotate(0deg) scale(0.85);
+    opacity: 0.8;
+  }
+  62.5% {
+    transform: scaleX(-1) translateY(-2px) rotate(1deg) scale(0.85);
+    opacity: 0.85;
+  }
+  75% {
+    transform: scaleX(-1) translateY(0) rotate(-1deg) scale(0.85);
+    opacity: 0.8;
+  }
+  100% {
+    left: -15%;
+    bottom: 6%;
+    transform: scaleX(1) translateY(0) rotate(0deg) scale(0.85);
+    opacity: 0.8;
+  }
+}
+
+/* 실제 걷기 애니메이션 적용 - 느리게 (랜덤 이동으로 대체) */
+.pet-character.sweet {
+  animation: pet-breathe 3s ease-in-out infinite, pet-float 4s ease-in-out infinite;
+}
+
+.pet-character.cool {
+  animation: pet-breathe 3s ease-in-out infinite, pet-float 5s ease-in-out infinite;
+}
+
+.pet-character.mature {
+  animation: pet-breathe 3s ease-in-out infinite, pet-float 4.5s ease-in-out infinite;
+}
+
+.pet-character.shy {
+  animation: pet-breathe 3s ease-in-out infinite, pet-float 6s ease-in-out infinite;
+}
+
+/* 부유 효과 (랜덤 이동과 함께) */
+@keyframes pet-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-5px) rotate(2deg);
+  }
+}
+
+/* 꼬리 흔들기 효과 - 느리게 */
+@keyframes tail-wag {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(10deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(-10deg);
+  }
+}
+
+.pet-tail {
+  display: inline-block;
+  animation: tail-wag 0.8s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+/* 귀 움직임 */
+@keyframes ear-flap {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-10deg);
+  }
+}
+
+/* 호흡 효과 - 살아있는 느낌 */
+@keyframes pet-breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+/* 점프 효과 */
+@keyframes pet-jump {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  25% {
+    transform: translateY(-25px) scale(1.1);
+  }
+  50% {
+    transform: translateY(-30px) scale(1.15);
+  }
+  75% {
+    transform: translateY(-25px) scale(1.1);
+  }
+}
+
+.pet-character.jumping {
+  animation: pet-jump 0.6s ease-in-out infinite;
+}
+
+/* 앉기 효과 */
+@keyframes pet-sit {
+  0% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(10px) scaleY(0.9);
+  }
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+.pet-character.sitting {
+  animation: pet-sit 1s ease-in-out infinite;
+  bottom: 8% !important;
+}
+
+/* 놀라거나 반응하는 효과 */
+@keyframes pet-react {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.2) rotate(-5deg);
+  }
+  50% {
+    transform: scale(1.15) rotate(5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(-3deg);
+  }
+}
+
+.pet-character.reacting {
+  animation: pet-react 0.5s ease-in-out;
+}
+
+/* 쓰다듬기 메시지 애니메이션 */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  15% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  85% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+

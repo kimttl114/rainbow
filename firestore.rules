@@ -1,0 +1,42 @@
+// Firestore 보안 규칙
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 사용자 데이터
+    match /users/{userId} {
+      // 사용자는 자신의 데이터만 읽고 쓸 수 있음
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // 펫 정보
+      match /pets/{petId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // 메시지
+      match /messages/{messageId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // 구독 정보
+      match /subscriptions/{subscriptionId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // 꿈 일기
+      match /dreams/{dreamId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // 가상 선물
+      match /gifts/{giftId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // 설정
+      match /settings/{settingId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}
+

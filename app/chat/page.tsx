@@ -737,6 +737,14 @@ export default function ChatPage() {
                 <span className="hidden sm:inline font-medium">선물</span>
               </button>
               <button
+                onClick={() => router.push('/onboarding')}
+                className="flex flex-col sm:flex-row items-center justify-center px-2 sm:px-3 py-1.5 sm:py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all text-sm sm:text-base"
+                title="설정"
+              >
+                <span className="text-xl sm:text-2xl mb-0.5 sm:mb-0 sm:mr-1.5">⚙️</span>
+                <span className="hidden sm:inline font-medium">설정</span>
+              </button>
+              <button
                 onClick={async () => {
                   try {
                     await signOut();

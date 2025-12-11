@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/AuthProvider';
-import { savePetInfo } from '@/lib/firestore';
+import { savePetInfo, getPetInfo, incrementUserCount } from '@/lib/firestore';
 import { uploadPhoto } from '@/lib/firebaseStorage';
 
 type PersonalityType = 'sweet' | 'cool' | 'mature' | 'shy';
@@ -132,8 +132,22 @@ export default function OnboardingPage() {
         backgroundPhoto: formData.backgroundPhoto || '없음',
       });
       
+      // 기존 펫 정보 확인 (처음 온보딩하는 경우에만 이용객 수 증가)
+      const existingPetInfo = await getPetInfo(user.uid);
+      const isNewUser = !existingPetInfo;
+      
       // Firestore에 저장
       await savePetInfo(user.uid, formData);
+      
+      // 처음 온보딩하는 경우에만 이용객 수 증가
+      if (isNewUser) {
+        try {
+          await incrementUserCount();
+        } catch (error) {
+          console.error('이용객 수 증가 오류:', error);
+          // 오류가 발생해도 온보딩은 계속 진행
+        }
+      }
       
       // localStorage에도 저장 (임시 호환성)
       localStorage.setItem('petInfo', JSON.stringify(formData));

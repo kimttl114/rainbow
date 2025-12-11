@@ -414,4 +414,50 @@ export const getRestoreRequests = async (userId: string) => {
   }
 };
 
+// 총 이용객 수 가져오기
+export const getTotalUserCount = async (): Promise<number> => {
+  try {
+    const statsRef = doc(db, 'stats', 'users');
+    const statsSnap = await getDoc(statsRef);
+    
+    if (statsSnap.exists()) {
+      return statsSnap.data().totalCount || 0;
+    }
+    return 0;
+  } catch (error: any) {
+    console.error('이용객 수 가져오기 오류:', error);
+    return 0;
+  }
+};
+
+// 이용객 수 증가 (온보딩 완료 시 호출)
+export const incrementUserCount = async (): Promise<number> => {
+  try {
+    const statsRef = doc(db, 'stats', 'users');
+    const statsSnap = await getDoc(statsRef);
+    
+    let newCount: number;
+    if (statsSnap.exists()) {
+      const currentCount = statsSnap.data().totalCount || 0;
+      newCount = currentCount + 1;
+      await updateDoc(statsRef, {
+        totalCount: newCount,
+        updatedAt: Timestamp.now(),
+      });
+    } else {
+      newCount = 1;
+      await setDoc(statsRef, {
+        totalCount: 1,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      });
+    }
+    
+    return newCount;
+  } catch (error: any) {
+    console.error('이용객 수 증가 오류:', error);
+    return 0;
+  }
+};
+
 

@@ -4,19 +4,35 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { signInWithGoogle } from '@/lib/firebaseAuth';
 import { useAuth } from '@/components/AuthProvider';
+import { getTotalUserCount } from '@/lib/firestore';
 
 export default function LoginPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [totalUsers, setTotalUsers] = useState<number | null>(null);
 
   useEffect(() => {
     // 이미 로그인되어 있으면 채팅 페이지로 이동
     if (!loading && user) {
       router.push('/chat');
     }
+    
+    // 이용객 수 불러오기
+    if (!loading && !user) {
+      loadUserCount();
+    }
   }, [user, loading, router]);
+  
+  const loadUserCount = async () => {
+    try {
+      const count = await getTotalUserCount();
+      setTotalUsers(count);
+    } catch (error) {
+      console.error('이용객 수 불러오기 오류:', error);
+    }
+  };
 
   const handleGoogleSignIn = async () => {
     try {
@@ -86,6 +102,14 @@ export default function LoginPage() {
           <p className="text-white mt-4 font-medium drop-shadow-lg">
             소중한 반려동물과 다시 만날 수 있는 특별한 공간
           </p>
+          {totalUsers !== null && (
+            <div className="mt-6 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+              <p className="text-white text-sm font-medium">
+                <span className="text-2xl font-bold text-white mr-2">{totalUsers.toLocaleString()}</span>
+                명이 무지개톡을 이용하고 있어요
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="space-y-4">

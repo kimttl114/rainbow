@@ -38,11 +38,16 @@ export async function POST(request: NextRequest) {
       };
 
       // 현재 메시지에 사진이 있으면 Vision API 사용
-      if (msg.photoUrl && currentPhotoUrl === msg.photoUrl) {
+      if (msg.photoUrl && currentPhotoUrl && currentPhotoUrl === msg.photoUrl) {
+        // 사진 분석을 위한 상세한 프롬프트
+        const photoPrompt = msg.text && msg.text.trim() 
+          ? `${petInfo.userNickname}이(가) 이 사진을 보내면서 "${msg.text}"라고 했어요. 이 사진을 자세히 보고 ${petInfo.name}의 관점에서 감정적이고 따뜻하게 반응해주세요. 사진에 무엇이 있는지 구체적으로 언급하며 (${petInfo.name}의 모습, 행동, 표정, 주변 환경 등) 추억을 나누는 것처럼 대답해주세요.`
+          : `${petInfo.userNickname}이(가) 사진을 보냈어요. 이 사진을 자세히 보고 ${petInfo.name}의 관점에서 감정적이고 따뜻하게 반응해주세요. 사진에 무엇이 있는지 구체적으로 언급하며 (${petInfo.name}의 모습, 행동, 표정, 주변 환경 등) 추억을 나누는 것처럼 대답해주세요. 예를 들어 "누나, 우리 이때 기억나? 내가 ${petInfo.favoriteSnack} 먹고 있던 때야!" 같은 식으로 구체적으로 말해주세요.`;
+        
         baseMessage.content = [
           {
             type: 'text',
-            text: msg.text || `${petInfo.userNickname}이(가) 사진을 보냈어요. 이 사진을 보고 ${petInfo.name}의 관점에서 감정적이고 따뜻하게 반응해주세요. 사진에 무엇이 있는지 구체적으로 언급하며 추억을 나누는 것처럼 대답해주세요.`,
+            text: photoPrompt,
           },
           {
             type: 'image_url',
@@ -58,9 +63,14 @@ export async function POST(request: NextRequest) {
       return baseMessage;
     });
 
+    // 사진이 있는지 확인
+    const hasPhoto = currentPhotoUrl && formattedMessages.some((msg: any) => 
+      Array.isArray(msg.content) && msg.content.some((item: any) => item.type === 'image_url')
+    );
+
     // OpenAI API 호출
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'gpt-4o-mini', // Vision API 지원 모델
       messages: [
         {
           role: 'system',
@@ -68,8 +78,8 @@ export async function POST(request: NextRequest) {
         },
         ...formattedMessages,
       ],
-      temperature: 0.9, // 더 높은 창의성 (0.9로 증가)
-      max_tokens: 200, // 사진이 있으면 조금 더 긴 응답 허용
+      temperature: 0.9, // 더 높은 창의성
+      max_tokens: hasPhoto ? 250 : 200, // 사진이 있으면 더 긴 응답 허용
       presence_penalty: 0.3, // 반복을 줄여서 더 자연스럽게
       frequency_penalty: 0.3, // 자주 나오는 단어를 줄여서 다양성 증가
     });

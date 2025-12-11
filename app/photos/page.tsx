@@ -10,7 +10,6 @@ interface PetInfo {
   name: string;
   photos?: string[];
   backgroundPhoto?: string;
-  photoAnalyses?: { [photoUrl: string]: string }; // 사진 URL -> 분석 결과 매핑
   [key: string]: any;
 }
 
@@ -20,7 +19,6 @@ export default function PhotosPage() {
   const [petInfo, setPetInfo] = useState<PetInfo | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [analyzingPhoto, setAnalyzingPhoto] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -56,17 +54,39 @@ export default function PhotosPage() {
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !user || !petInfo) return;
+    
+    // 기본 검증
+    if (!file) {
+      return;
+    }
+
+    if (!user) {
+      alert('로그인이 필요합니다. 다시 로그인해주세요.');
+      router.push('/login');
+      return;
+    }
+
+    if (!petInfo) {
+      alert('반려동물 정보를 먼저 입력해주세요.');
+      router.push('/onboarding');
+      return;
+    }
 
     // 파일 크기 제한 (5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert('파일 크기는 5MB 이하여야 합니다.');
+      if (e.target) {
+        e.target.value = '';
+      }
       return;
     }
 
     // 이미지 파일만 허용
     if (!file.type.startsWith('image/')) {
       alert('이미지 파일만 업로드 가능합니다.');
+      if (e.target) {
+        e.target.value = '';
+      }
       return;
     }
 
@@ -75,13 +95,16 @@ export default function PhotosPage() {
       // Firebase Storage에 업로드
       const downloadURL = await uploadPhoto(user.uid, file);
       
+      if (!downloadURL) {
+        throw new Error('업로드된 파일의 URL을 가져올 수 없습니다.');
+      }
+      
       const updatedPhotos = [...(petInfo.photos || []), downloadURL];
       const updatedPetInfo = {
         ...petInfo,
         photos: updatedPhotos,
         // 첫 사진이면 자동으로 배경으로 설정
         backgroundPhoto: petInfo.backgroundPhoto || downloadURL,
-        photoAnalyses: petInfo.photoAnalyses || {},
       };
       
       setPetInfo(updatedPetInfo);
@@ -91,12 +114,10 @@ export default function PhotosPage() {
       
       // localStorage에도 저장
       localStorage.setItem('petInfo', JSON.stringify(updatedPetInfo));
-      
-      // 사진 분석 시작 (백그라운드)
-      analyzePhoto(downloadURL);
     } catch (error: any) {
       console.error('사진 업로드 오류:', error);
-      alert(`사진 업로드에 실패했습니다: ${error.message || '알 수 없는 오류'}`);
+      const errorMessage = error.message || '알 수 없는 오류가 발생했습니다.';
+      alert(`사진 업로드에 실패했습니다: ${errorMessage}`);
     } finally {
       setUploading(false);
       // 파일 입력 초기화
@@ -133,52 +154,6 @@ export default function PhotosPage() {
     }
   };
 
-  const analyzePhoto = async (photoUrl: string) => {
-    if (!user || !petInfo) return;
-    
-    setAnalyzingPhoto(photoUrl);
-    try {
-      const response = await fetch('/api/analyze-photo', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ photoUrl }),
-      });
-
-      if (!response.ok) {
-        throw new Error('사진 분석 실패');
-      }
-
-      const data = await response.json();
-      const analysis = data.analysis;
-
-      // 분석 결과 저장
-      const updatedPetInfo = {
-        ...petInfo,
-        photoAnalyses: {
-          ...(petInfo.photoAnalyses || {}),
-          [photoUrl]: analysis,
-        },
-      };
-
-      setPetInfo(updatedPetInfo);
-      
-      // Firestore에 저장
-      await savePetInfo(user.uid, updatedPetInfo);
-      
-      // localStorage에도 저장
-      localStorage.setItem('petInfo', JSON.stringify(updatedPetInfo));
-      
-      console.log('사진 분석 완료:', photoUrl);
-    } catch (error: any) {
-      console.error('사진 분석 오류:', error);
-      // 분석 실패해도 계속 진행 (사용자에게 알리지 않음)
-    } finally {
-      setAnalyzingPhoto(null);
-    }
-  };
-
   const handleRemovePhoto = async (url: string) => {
     if (!user || !petInfo) return;
     
@@ -187,14 +162,10 @@ export default function PhotosPage() {
     setSaving(true);
     try {
       const updatedPhotos = petInfo.photos?.filter(p => p !== url) || [];
-      // 분석 결과도 함께 삭제
-      const updatedAnalyses = { ...(petInfo.photoAnalyses || {}) };
-      delete updatedAnalyses[url];
       
       const updatedPetInfo = {
         ...petInfo,
         photos: updatedPhotos,
-        photoAnalyses: updatedAnalyses,
         // 삭제한 사진이 배경이었으면 첫 번째 사진으로 변경
         backgroundPhoto: petInfo.backgroundPhoto === url 
           ? (updatedPhotos[0] || '')
@@ -356,18 +327,6 @@ export default function PhotosPage() {
                   {petInfo.backgroundPhoto === photo && (
                     <div className="absolute top-2 left-2 bg-purple-500 text-white text-xs px-2 py-1 rounded-full font-medium">
                       배경
-                    </div>
-                  )}
-                  {/* 분석 중 표시 */}
-                  {analyzingPhoto === photo && (
-                    <div className="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-medium animate-pulse">
-                      분석 중...
-                    </div>
-                  )}
-                  {/* 분석 완료 표시 */}
-                  {petInfo.photoAnalyses?.[photo] && analyzingPhoto !== photo && (
-                    <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium">
-                      ✓ 분석됨
                     </div>
                   )}
                   {/* 호버 시 버튼 */}

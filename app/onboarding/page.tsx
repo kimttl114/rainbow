@@ -193,22 +193,33 @@ export default function OnboardingPage() {
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    
+    // 기본 검증
+    if (!file) {
+      return;
+    }
 
     if (!user) {
-      alert('로그인이 필요합니다.');
+      alert('로그인이 필요합니다. 다시 로그인해주세요.');
+      router.push('/login');
       return;
     }
 
     // 파일 크기 제한 (5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert('파일 크기는 5MB 이하여야 합니다.');
+      if (e.target) {
+        e.target.value = '';
+      }
       return;
     }
 
     // 이미지 파일만 허용
     if (!file.type.startsWith('image/')) {
       alert('이미지 파일만 업로드 가능합니다.');
+      if (e.target) {
+        e.target.value = '';
+      }
       return;
     }
 
@@ -217,15 +228,24 @@ export default function OnboardingPage() {
       // Firebase Storage에 직접 업로드 (클라이언트 사이드)
       const downloadURL = await uploadPhoto(user.uid, file);
       
+      if (!downloadURL) {
+        throw new Error('업로드된 파일의 URL을 가져올 수 없습니다.');
+      }
+      
       setFormData(prev => ({
         ...prev,
         photos: [...(prev.photos || []), downloadURL],
       }));
     } catch (error: any) {
       console.error('사진 업로드 오류:', error);
-      alert(`사진 업로드에 실패했습니다: ${error.message || '알 수 없는 오류'}`);
+      const errorMessage = error.message || '알 수 없는 오류가 발생했습니다.';
+      alert(`사진 업로드에 실패했습니다: ${errorMessage}`);
     } finally {
       setUploading(false);
+      // 파일 입력 초기화
+      if (e.target) {
+        e.target.value = '';
+      }
     }
   };
 

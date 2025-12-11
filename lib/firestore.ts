@@ -47,7 +47,6 @@ export const savePetInfo = async (userId: string, petInfo: any) => {
       photos: petInfo.photos && Array.isArray(petInfo.photos) ? petInfo.photos : [],
       backgroundPhoto: petInfo.backgroundPhoto || '',
       // 사진 분석 결과 (photoUrl -> analysis 매핑)
-      photoAnalyses: petInfo.photoAnalyses || {},
       
       // 메타데이터
       createdAt: Timestamp.now(),

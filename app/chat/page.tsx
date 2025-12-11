@@ -353,11 +353,12 @@ export default function ChatPage() {
     
     setIsSending(true);
 
-    // 메시지 제한 확인 (텍스트 메시지가 있을 때만)
-    if (inputText.trim()) {
+    // 메시지 제한 확인 (텍스트 메시지 또는 사진이 있을 때)
+    if (inputText.trim() || selectedPhoto) {
       const { canSend, count } = await checkAndIncrementMessage(user.uid);
       if (!canSend) {
         setShowLimitModal(true);
+        setIsSending(false);
         // 구독 상태 새로고침
         await loadSubscriptionStatus();
         return;
@@ -439,7 +440,7 @@ export default function ChatPage() {
         body: JSON.stringify({
           messages: [...messages, userMessage],
           petInfo: petInfo,
-          currentPhotoUrl: selectedPhoto || undefined, // 현재 보낸 사진 URL 전달
+          currentPhotoUrl: userMessage.photoUrl || undefined, // 현재 보낸 사진 URL 전달 (Firebase Storage URL)
         }),
       });
 
@@ -1066,11 +1067,33 @@ export default function ChatPage() {
             className="hidden"
             onChange={async (e) => {
               const file = e.target.files?.[0];
-              if (!file || !user) return;
+              
+              // 기본 검증
+              if (!file) {
+                return;
+              }
+
+              if (!user) {
+                alert('로그인이 필요합니다. 다시 로그인해주세요.');
+                router.push('/login');
+                return;
+              }
 
               // 파일 크기 제한 (5MB)
               if (file.size > 5 * 1024 * 1024) {
                 alert('파일 크기는 5MB 이하여야 합니다.');
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = '';
+                }
+                return;
+              }
+
+              // 이미지 파일만 허용
+              if (!file.type.startsWith('image/')) {
+                alert('이미지 파일만 업로드 가능합니다.');
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = '';
+                }
                 return;
               }
 
@@ -1082,26 +1105,38 @@ export default function ChatPage() {
                 setPreviewBlobUrl(null);
               }
               
+              let previewUrl: string | null = null;
+              
               try {
                 // 미리보기용 임시 URL 생성
-                const previewUrl = URL.createObjectURL(file);
+                previewUrl = URL.createObjectURL(file);
                 setPreviewBlobUrl(previewUrl);
                 setSelectedPhoto(previewUrl);
 
                 // Firebase Storage에 업로드
                 const downloadURL = await uploadPhoto(user.uid, file);
                 
+                if (!downloadURL) {
+                  throw new Error('업로드된 파일의 URL을 가져올 수 없습니다.');
+                }
+                
                 // blob URL 정리
-                URL.revokeObjectURL(previewUrl);
-                setPreviewBlobUrl(null);
+                if (previewUrl) {
+                  URL.revokeObjectURL(previewUrl);
+                  setPreviewBlobUrl(null);
+                }
                 
                 // 실제 다운로드 URL로 교체
                 setSelectedPhoto(downloadURL);
-              } catch (error) {
+              } catch (error: any) {
                 console.error('사진 업로드 오류:', error);
-                alert('사진 업로드에 실패했습니다.');
+                const errorMessage = error.message || '알 수 없는 오류가 발생했습니다.';
+                alert(`사진 업로드에 실패했습니다: ${errorMessage}`);
                 
                 // 오류 시 blob URL 정리
+                if (previewUrl) {
+                  URL.revokeObjectURL(previewUrl);
+                }
                 if (previewBlobUrl) {
                   URL.revokeObjectURL(previewBlobUrl);
                   setPreviewBlobUrl(null);

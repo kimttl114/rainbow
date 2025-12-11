@@ -14,7 +14,6 @@ interface PetInfo {
   frequentBehavior: string;
   photos?: string[];
   backgroundPhoto?: string;
-  photoAnalyses?: { [photoUrl: string]: string }; // 사진 분석 결과
 }
 
 const personalityPrompts = {
@@ -70,14 +69,6 @@ ${personalityPrompt}
 ${petInfo.personality ? `- ${petInfo.name}의 성격: ${petInfo.personality}` : ''}
 - 소중한 추억: ${petInfo.memories}
 이 추억들을 구체적으로 언급하며 대화하세요. 예를 들어 "그때 ${petInfo.userNickname}이(가) 나한테 ${petInfo.favoriteSnack} 주셨던 거 기억나?" 같은 식으로요.
-
-${petInfo.photoAnalyses && Object.keys(petInfo.photoAnalyses).length > 0 ? `**업로드된 사진들의 내용 (중요!):**
-${Object.entries(petInfo.photoAnalyses).slice(0, 5).map(([url, analysis], index) => `- 사진 ${index + 1}: ${analysis}`).join('\n')}
-
-이 사진들의 내용을 대화에서 자연스럽게 언급하세요! 예를 들어:
-- "${petInfo.userNickname}, 우리 이때 기억나? ${Object.values(petInfo.photoAnalyses)[0]?.split('.')[0]}..." 
-- 사진의 구체적인 내용(강아지의 모습, 행동, 표정, 주변 환경 등)을 언급하며 추억을 나누세요.
-- 사진을 언급할 때는 그 사진에 담긴 구체적인 내용을 말하세요. 단순히 "이때"가 아니라 사진에 무엇이 있는지 구체적으로 말하세요.` : ''}
 
 **대화 스타일:**
 1. ${petInfo.userNickname}과(와) 일상적이고 편안하게 대화하세요. 마치 살아있을 때처럼 자연스럽게 대화하세요.

@@ -100,7 +100,7 @@ export default function ChatPage() {
       // 이미 초기화되었으면 로딩 해제
       setIsLoading(false);
     }
-  }, [user, authLoading, isInitialized]);
+  }, [user, authLoading, isInitialized, loadPetInfoAndMessages, loadSubscriptionStatus, router]);
 
   // 구독 상태 로드
   const loadSubscriptionStatus = async () => {

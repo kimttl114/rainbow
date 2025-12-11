@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
 
@@ -50,13 +50,6 @@ export const metadata: Metadata = {
     description: "그곳에서 온 편지, 다시 나누는 이야기. 펫로스 증후군 치유를 위한 AI 채팅 & 디지털 추모 웹앱",
     images: [ogImageUrl], // 절대 URL 사용
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: "cover", // iOS Safari notch 지원
-  },
   other: {
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "default",
@@ -64,6 +57,14 @@ export const metadata: Metadata = {
     "mobile-web-app-capable": "yes",
     "theme-color": "#8B5CF6",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover", // iOS Safari notch 지원
 };
 
 export default function RootLayout({

@@ -308,7 +308,8 @@ export default function OnboardingPage() {
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
                   placeholder="예: 몽이, 뽀삐, 초코..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-white text-gray-900 placeholder:text-gray-500"
+                  style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -321,7 +322,8 @@ export default function OnboardingPage() {
                   value={formData.breed}
                   onChange={(e) => handleInputChange('breed', e.target.value)}
                   placeholder="예: 골든 리트리버, 푸들, 비글..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-white text-gray-900 placeholder:text-gray-500"
+                  style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -334,7 +336,8 @@ export default function OnboardingPage() {
                   value={formData.age}
                   onChange={(e) => handleInputChange('age', e.target.value)}
                   placeholder="예: 15세, 3살..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-white text-gray-900 placeholder:text-gray-500"
+                  style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -346,7 +349,8 @@ export default function OnboardingPage() {
                   type="date"
                   value={formData.passedDate}
                   onChange={(e) => handleInputChange('passedDate', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-white text-gray-900"
+                  style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -359,7 +363,8 @@ export default function OnboardingPage() {
                   value={formData.userNickname}
                   onChange={(e) => handleInputChange('userNickname', e.target.value)}
                   placeholder="예: 엄마, 누나, 형아, 오빠, 아빠..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-white text-gray-900 placeholder:text-gray-500"
+                  style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   {formData.name ? `${formData.name}이(가) 당신을 어떻게 불렀나요?` : '아이가 당신을 어떻게 불렀나요?'}
@@ -418,7 +423,8 @@ export default function OnboardingPage() {
                   onChange={(e) => handleInputChange('personality', e.target.value)}
                   placeholder="아이의 성격을 더 자세히 설명해주세요..."
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all resize-none bg-white text-gray-900 placeholder:text-gray-500"
+                  style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
                 />
               </div>
             </div>
@@ -440,7 +446,8 @@ export default function OnboardingPage() {
                   onChange={(e) => handleInputChange('memories', e.target.value)}
                   placeholder="함께했던 특별한 순간들을 자유롭게 적어주세요..."
                   rows={8}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all resize-none bg-white text-gray-900 placeholder:text-gray-500"
+                  style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
                 />
                 <p className="text-sm text-gray-500 mt-2">
                   이 정보는 AI가 {formData.name || '아이'}의 성격과 말투를 학습하는 데 사용됩니다.
@@ -465,7 +472,8 @@ export default function OnboardingPage() {
                   value={formData.favoriteSnack}
                   onChange={(e) => handleInputChange('favoriteSnack', e.target.value)}
                   placeholder="예: 고구마, 닭가슴살, 개껌..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-white text-gray-900 placeholder:text-gray-500"
+                  style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -478,7 +486,8 @@ export default function OnboardingPage() {
                   value={formData.dislikedThing}
                   onChange={(e) => handleInputChange('dislikedThing', e.target.value)}
                   placeholder="예: 오토바이 소리, 비, 혼자 있는 것..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-white text-gray-900 placeholder:text-gray-500"
+                  style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -491,7 +500,8 @@ export default function OnboardingPage() {
                   value={formData.frequentBehavior}
                   onChange={(e) => handleInputChange('frequentBehavior', e.target.value)}
                   placeholder="예: 발라당, 꼬리 흔들기, 손 핥기..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-white text-gray-900 placeholder:text-gray-500"
+                  style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
                 />
               </div>
             </div>

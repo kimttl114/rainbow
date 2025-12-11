@@ -131,7 +131,8 @@ export default function DreamPage() {
               value={dreamText}
               onChange={(e) => setDreamText(e.target.value)}
               placeholder={`${petInfo.name}이(가) 꿈에 나왔던 이야기를 자유롭게 적어주세요...`}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none resize-none h-40 text-sm sm:text-base"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none resize-none h-40 text-sm sm:text-base bg-white text-gray-900 placeholder:text-gray-500"
+              style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
               disabled={isLoading}
             />
           </div>

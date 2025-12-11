@@ -353,7 +353,8 @@ export default function AdminRestorePage() {
                   <textarea
                     value={sampleForm.description}
                     onChange={(e) => setSampleForm({ ...sampleForm, description: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-500"
+                    style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
                     rows={3}
                     placeholder="샘플에 대한 설명을 입력하세요"
                   />

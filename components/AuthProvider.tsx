@@ -21,13 +21,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // 카카오톡 인앱 브라우저 최적화: 타임아웃 설정
+    const timeout = setTimeout(() => {
+      if (loading) {
+        setLoading(false);
+      }
+    }, 3000); // 최대 3초 대기
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
+      clearTimeout(timeout);
     });
 
-    return () => unsubscribe();
-  }, []);
+    return () => {
+      unsubscribe();
+      clearTimeout(timeout);
+    };
+  }, [loading]);
 
   return (
     <AuthContext.Provider value={{ user, loading }}>

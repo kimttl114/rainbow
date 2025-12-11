@@ -56,6 +56,9 @@ export const metadata: Metadata = {
     "apple-mobile-web-app-title": "무지개톡",
     "mobile-web-app-capable": "yes",
     "theme-color": "#8B5CF6",
+    // 카카오톡 인앱 브라우저 최적화
+    "format-detection": "telephone=no",
+    "X-UA-Compatible": "IE=edge",
   },
 };
 

@@ -1,24 +1,33 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 
 export default function Home() {
   const router = useRouter();
   const { user, loading } = useAuth();
+  const [redirected, setRedirected] = useState(false);
 
   useEffect(() => {
-    if (!loading) {
+    // 카카오톡 인앱 브라우저 최적화: 즉시 리다이렉트
+    if (!loading && !redirected) {
+      setRedirected(true);
       if (user) {
         // 로그인되어 있으면 채팅 페이지로 이동
-        router.push('/chat');
+        router.replace('/chat');
       } else {
         // 로그인되지 않았으면 로그인 페이지로 이동
-        router.push('/login');
+        router.replace('/login');
       }
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, redirected]);
+
+  // 카카오톡 인앱 브라우저 최적화: 즉시 리다이렉트 시도
+  if (!loading && !redirected) {
+    // 빈 화면 대신 즉시 리다이렉트
+    return null;
+  }
 
   return (
     <main className="min-h-screen flex items-center justify-center sky-background relative overflow-hidden">

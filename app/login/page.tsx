@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { signInWithGoogle } from '@/lib/firebaseAuth';
+import { signInWithGoogle, getGoogleSignInResult } from '@/lib/firebaseAuth';
 import { useAuth } from '@/components/AuthProvider';
 import { getTotalUserCount } from '@/lib/firestore';
 
@@ -14,14 +14,28 @@ export default function LoginPage() {
   const [totalUsers, setTotalUsers] = useState<number | null>(null);
 
   useEffect(() => {
-    // 이미 로그인되어 있으면 채팅 페이지로 이동
-    if (!loading && user) {
-      router.push('/chat');
-    }
-    
-    // 이용객 수 불러오기
+    // 리다이렉트 로그인 결과 확인 (카카오톡 인앱 브라우저용)
+    const checkRedirectResult = async () => {
+      try {
+        const result = await getGoogleSignInResult();
+        if (result) {
+          // 리다이렉트 로그인 성공
+          router.replace('/chat');
+        }
+      } catch (error) {
+        console.error('리다이렉트 결과 확인 오류:', error);
+      }
+    };
+
     if (!loading && !user) {
+      checkRedirectResult();
+      // 이용객 수 불러오기 (비동기로 처리하여 로딩 지연 방지)
       loadUserCount();
+    }
+
+    // 이미 로그인되어 있으면 채팅 페이지로 이동 (카카오톡 최적화: replace 사용)
+    if (!loading && user) {
+      router.replace('/chat');
     }
   }, [user, loading, router]);
   

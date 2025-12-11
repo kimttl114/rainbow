@@ -257,7 +257,7 @@ export default function AdminRestorePage() {
       <div className="min-h-screen flex items-center justify-center sky-background relative overflow-hidden">
         <div className="text-center relative z-10">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
-          <p className="mt-4 text-white font-medium drop-shadow-lg">로딩 중...</p>
+          <p className="mt-4 text-visible-white font-medium">로딩 중...</p>
         </div>
       </div>
     );
@@ -274,20 +274,20 @@ export default function AdminRestorePage() {
         <div className="mb-6">
           <button
             onClick={() => router.push('/chat')}
-            className="text-white hover:text-gray-200 transition-colors mb-4 flex items-center drop-shadow-lg"
+            className="text-visible-white hover:text-gray-200 transition-colors mb-4 flex items-center"
           >
             ← 채팅으로 돌아가기
           </button>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white drop-shadow-lg mb-2">
+          <h1 className="text-3xl sm:text-4xl font-bold text-visible-white mb-2">
             🔧 관리자 대시보드 - AI 복원 요청
           </h1>
-          <p className="text-white/90 drop-shadow-lg">
+          <p className="text-visible-white opacity-90">
             사용자들의 복원 요청을 관리하고 처리하세요
           </p>
         </div>
 
         {/* 샘플 애니메이션 관리 섹션 */}
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8 mb-6">
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8 mb-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-semibold text-gray-800">✨ 샘플 애니메이션 관리</h2>
             <button
@@ -433,7 +433,7 @@ export default function AdminRestorePage() {
         </div>
 
         {/* 필터 */}
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-4 mb-6">
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-4 mb-6">
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setFilter('all')}
@@ -479,7 +479,7 @@ export default function AdminRestorePage() {
         </div>
 
         {/* 요청 목록 */}
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8">
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8">
           {loading ? (
             <div className="text-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto"></div>

@@ -99,7 +99,7 @@ export default function RestorePage() {
       <div className="min-h-screen flex items-center justify-center sky-background relative overflow-hidden">
         <div className="text-center relative z-10">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
-          <p className="mt-4 text-white font-medium drop-shadow-lg">로딩 중...</p>
+          <p className="mt-4 text-visible-white font-medium">로딩 중...</p>
         </div>
       </div>
     );
@@ -123,20 +123,20 @@ export default function RestorePage() {
         <div className="mb-6">
           <button
             onClick={() => router.push('/chat')}
-            className="text-white hover:text-gray-200 transition-colors mb-4 flex items-center drop-shadow-lg"
+            className="text-visible-white hover:text-gray-200 transition-colors mb-4 flex items-center"
           >
             ← 채팅으로 돌아가기
           </button>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white drop-shadow-lg mb-2">
+          <h1 className="text-3xl sm:text-4xl font-bold text-visible-white mb-2">
             ✨ AI 반려동물 복원
           </h1>
-          <p className="text-white/90 drop-shadow-lg">
+          <p className="text-visible-white opacity-90">
             떠난 아이를 다시 움직이게 만드는 특별한 서비스
           </p>
         </div>
 
         {/* 샘플 애니메이션 섹션 */}
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8 mb-6">
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8 mb-6">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">✨ 샘플 애니메이션</h2>
           <p className="text-gray-600 mb-6">
             복원 서비스로 만들어진 샘플 애니메이션을 확인해보세요.
@@ -191,7 +191,7 @@ export default function RestorePage() {
         </div>
 
         {/* 서비스 안내 및 요청 버튼 */}
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8">
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8">
           <div className="bg-purple-50 border-l-4 border-purple-500 rounded-lg p-4 mb-6">
             <h3 className="font-semibold text-purple-800 mb-2">💡 서비스 안내</h3>
             <ul className="text-sm text-purple-700 space-y-1">

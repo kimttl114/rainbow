@@ -279,15 +279,15 @@ export default function OnboardingPage() {
         </div>
 
         {/* 폼 내용 */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
+        <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
           <div className="text-center mb-6">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+            <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
               🌈 소울 온보딩
             </h1>
-            <p className="text-gray-600 italic">
+            <p className="text-gray-700 italic text-sm sm:text-base">
               &ldquo;그곳에서 온 편지, 다시 나누는 이야기&rdquo;
             </p>
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-xs sm:text-sm text-gray-600 mt-2">
               아이를 기억하는 특별한 의식
             </p>
           </div>

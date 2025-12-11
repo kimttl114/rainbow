@@ -85,7 +85,7 @@ export default function DreamPage() {
       <div className="min-h-screen flex items-center justify-center sky-background relative overflow-hidden">
         <div className="text-center relative z-10">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
-          <p className="mt-4 text-white font-medium drop-shadow-lg">로딩 중...</p>
+          <p className="mt-4 text-visible-white font-medium">로딩 중...</p>
         </div>
       </div>
     );
@@ -105,7 +105,7 @@ export default function DreamPage() {
       <div className="heaven-light"></div>
       
       <div className="max-w-2xl mx-auto py-8 relative z-10">
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8">
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8">
           {/* 헤더 */}
           <div className="mb-6">
             <button

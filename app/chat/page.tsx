@@ -602,10 +602,10 @@ export default function ChatPage() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center sky-background p-4">
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
           <div className="text-6xl mb-4">😢</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">오류가 발생했습니다</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">오류가 발생했습니다</h2>
+          <p className="text-gray-700 mb-6">{error}</p>
           <button
             onClick={() => {
               setError(null);
@@ -666,7 +666,7 @@ export default function ChatPage() {
       
       <div className="relative z-10 flex flex-col min-h-screen">
         {/* 헤더 - 고정 */}
-        <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-200 px-2 sm:px-4 py-3 sm:py-4">
+        <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200 px-2 sm:px-4 py-3 sm:py-4">
           {/* 오프라인 알림 */}
           {!isOnlineState && (
             <div className="bg-yellow-500 text-white text-center py-2 px-4 text-sm">
@@ -679,8 +679,8 @@ export default function ChatPage() {
                 {petInfo.name?.[0] || '🐾'}
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-base sm:text-lg font-semibold text-gray-800 truncate">{petInfo.name}</h1>
-                <p className="text-xs sm:text-sm text-gray-500 truncate">{petInfo.breed}</p>
+                <h1 className="text-base sm:text-lg font-semibold text-gray-900 truncate">{petInfo.name}</h1>
+                <p className="text-xs sm:text-sm text-gray-700 truncate">{petInfo.breed}</p>
               </div>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
@@ -876,8 +876,8 @@ export default function ChatPage() {
                   message.sender === 'user'
                     ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-br-sm'
                     : message.isSafetyResponse
-                    ? 'bg-yellow-50 border-2 border-yellow-300 text-gray-800 rounded-bl-sm'
-                    : 'bg-white text-gray-800 shadow-md rounded-bl-sm'
+                    ? 'bg-yellow-50 border-2 border-yellow-300 text-gray-900 rounded-bl-sm'
+                    : 'bg-white text-gray-900 shadow-md rounded-bl-sm'
                 }`}
               >
                 {message.photoUrl && !message.photoUrl.startsWith('blob:') && (
@@ -1031,7 +1031,7 @@ export default function ChatPage() {
       )}
 
       {/* 입력 영역 - 고정 */}
-      <div className="sticky bottom-0 z-50 bg-white/90 backdrop-blur-md border-t border-gray-200 px-2 sm:px-4 py-3 sm:py-4 shadow-lg">
+      <div className="sticky bottom-0 z-50 bg-white/95 backdrop-blur-md border-t border-gray-200 px-2 sm:px-4 py-3 sm:py-4 shadow-lg">
         {/* 선택된 사진 미리보기 */}
         {selectedPhoto && (
           <div className="max-w-4xl mx-auto mb-2 relative">

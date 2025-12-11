@@ -42,7 +42,7 @@ export default function Home() {
       
       <div className="text-center relative z-10">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
-        <p className="mt-4 text-white font-medium drop-shadow-lg">로딩 중...</p>
+        <p className="mt-4 text-visible-white font-medium">로딩 중...</p>
       </div>
     </main>
   );

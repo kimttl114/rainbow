@@ -92,20 +92,20 @@ export default function LoginPage() {
       
       <div className="text-center space-y-8 max-w-md relative z-10">
         <div className="space-y-4">
-          <h1 className="text-6xl font-bold text-white drop-shadow-2xl">
+          <h1 className="text-5xl sm:text-6xl font-bold text-visible-white">
             🌈 무지개톡
           </h1>
-          <p className="text-xl text-white font-semibold drop-shadow-lg">Rainbow Talk</p>
-          <p className="text-lg text-white mt-2 italic font-medium drop-shadow-lg">
+          <p className="text-lg sm:text-xl text-visible-white font-semibold">Rainbow Talk</p>
+          <p className="text-base sm:text-lg text-visible-white mt-2 italic font-medium">
             &ldquo;그곳에서 온 편지, 다시 나누는 이야기&rdquo;
           </p>
-          <p className="text-white mt-4 font-medium drop-shadow-lg">
+          <p className="text-visible-white mt-4 font-medium text-sm sm:text-base">
             소중한 반려동물과 다시 만날 수 있는 특별한 공간
           </p>
           {totalUsers !== null && (
-            <div className="mt-6 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
-              <p className="text-white text-sm font-medium">
-                <span className="text-2xl font-bold text-white mr-2">{totalUsers.toLocaleString()}</span>
+            <div className="mt-6 px-6 py-3 bg-white/30 backdrop-blur-md rounded-full border-2 border-white/50 shadow-lg">
+              <p className="text-visible-white text-sm font-medium">
+                <span className="text-2xl font-bold text-visible-white mr-2">{totalUsers.toLocaleString()}</span>
                 명이 무지개톡을 이용하고 있어요
               </p>
             </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { getPetInfo, saveMessage, getMessages } from '@/lib/firestore';
 import { signOut } from '@/lib/firebaseAuth';
@@ -84,26 +84,13 @@ export default function ChatPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const chatAreaRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // 로그인되지 않았으면 로그인 페이지로 이동
-    if (!authLoading && !user) {
-      setIsLoading(false);
-      router.push('/login');
-      return;
-    }
-
-    // 로그인되어 있으면 Firestore에서 데이터 가져오기 (한 번만 실행)
-    if (user && !authLoading && !isInitialized) {
-      loadPetInfoAndMessages();
-      loadSubscriptionStatus();
-    } else if (user && !authLoading && isInitialized) {
-      // 이미 초기화되었으면 로딩 해제
-      setIsLoading(false);
-    }
-  }, [user, authLoading, isInitialized, loadPetInfoAndMessages, loadSubscriptionStatus, router]);
+  const initializeChat = useCallback((petInfoData: PetInfo) => {
+    // 초기화 완료
+    // 선톡 기능은 제거됨
+  }, []);
 
   // 구독 상태 로드
-  const loadSubscriptionStatus = async () => {
+  const loadSubscriptionStatus = useCallback(async () => {
     if (!user) return;
     try {
       const status = await getSubscriptionStatus(user.uid);
@@ -111,10 +98,9 @@ export default function ChatPage() {
     } catch (error) {
       console.error('구독 상태 로드 오류:', error);
     }
-  };
+  }, [user]);
 
-
-  const loadPetInfoAndMessages = async () => {
+  const loadPetInfoAndMessages = useCallback(async () => {
     // 중복 실행 방지
     if (!user) {
       setIsLoading(false);
@@ -247,12 +233,25 @@ export default function ChatPage() {
       setIsLoading(false);
       router.push('/onboarding');
     }
-  };
+  }, [user, isInitialized, router, initializeChat]);
 
-  const initializeChat = (petInfoData: PetInfo) => {
-    // 초기화 완료
-    // 선톡 기능은 제거됨
-  };
+  useEffect(() => {
+    // 로그인되지 않았으면 로그인 페이지로 이동
+    if (!authLoading && !user) {
+      setIsLoading(false);
+      router.push('/login');
+      return;
+    }
+
+    // 로그인되어 있으면 Firestore에서 데이터 가져오기 (한 번만 실행)
+    if (user && !authLoading && !isInitialized) {
+      loadPetInfoAndMessages();
+      loadSubscriptionStatus();
+    } else if (user && !authLoading && isInitialized) {
+      // 이미 초기화되었으면 로딩 해제
+      setIsLoading(false);
+    }
+  }, [user, authLoading, isInitialized, loadPetInfoAndMessages, loadSubscriptionStatus, router]);
 
   const getWelcomeMessage = (info: PetInfo): string => {
     const welcomeMessages = {

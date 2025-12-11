@@ -164,7 +164,30 @@ export default function LoginPage() {
 
           {error && (
             <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-600">{error}</p>
+              <p className="text-sm text-red-600 mb-2">{error}</p>
+              {error.includes('카카오톡') || error.includes('외부 브라우저') ? (
+                <div className="mt-3 space-y-2">
+                  <p className="text-xs text-gray-600 font-medium">해결 방법:</p>
+                  <ol className="text-xs text-gray-600 list-decimal list-inside space-y-1">
+                    <li>카카오톡에서 링크를 길게 눌러 "외부 브라우저로 열기" 선택</li>
+                    <li>또는 주소를 복사해서 Chrome, Safari 등에서 직접 접속</li>
+                    <li>외부 브라우저에서 Google 로그인 진행</li>
+                  </ol>
+                  <button
+                    onClick={() => {
+                      const url = window.location.href;
+                      navigator.clipboard.writeText(url).then(() => {
+                        alert('주소가 복사되었습니다!\nChrome이나 Safari에서 붙여넣기 하세요.');
+                      }).catch(() => {
+                        alert(`주소를 복사해주세요:\n${url}`);
+                      });
+                    }}
+                    className="mt-2 w-full px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors"
+                  >
+                    📋 주소 복사하기
+                  </button>
+                </div>
+              ) : null}
             </div>
           )}
 

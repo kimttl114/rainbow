@@ -38,13 +38,33 @@ const isInAppBrowser = (): boolean => {
 export const signInWithGoogle = async () => {
   const provider = new GoogleAuthProvider();
   
-  // 카카오톡이나 인앱 브라우저에서는 redirect 사용
+  // 카카오톡 인앱 브라우저에서는 외부 브라우저로 열도록 안내
+  if (isKakaoTalkInAppBrowser()) {
+    // 카카오톡에서는 Google 로그인이 차단되므로 외부 브라우저로 열기
+    const currentUrl = window.location.href;
+    const externalUrl = currentUrl.replace(/^https?:\/\//, '');
+    
+    // 외부 브라우저로 열기 시도
+    if (window.confirm('카카오톡에서는 Google 로그인이 제한됩니다.\n\n외부 브라우저(Chrome, Safari)로 열어서 로그인하시겠습니까?')) {
+      // 외부 브라우저로 열기
+      window.open(`https://${externalUrl}`, '_blank');
+      throw new Error('외부 브라우저에서 로그인해주세요.');
+    } else {
+      throw new Error('카카오톡 인앱 브라우저에서는 Google 로그인을 사용할 수 없습니다. 외부 브라우저에서 접속해주세요.');
+    }
+  }
+  
+  // 다른 인앱 브라우저에서는 redirect 사용
   if (isInAppBrowser()) {
     try {
       await signInWithRedirect(auth, provider);
       // redirect는 페이지 이동이므로 여기서 return
       return null;
     } catch (error: any) {
+      // disallowed_useragent 오류 처리
+      if (error.code === 'auth/unauthorized-domain' || error.message?.includes('disallowed_useragent')) {
+        throw new Error('이 브라우저에서는 Google 로그인을 사용할 수 없습니다. 외부 브라우저(Chrome, Safari)에서 접속해주세요.');
+      }
       console.error('Google 로그인 (redirect) 오류:', error);
       throw error;
     }
@@ -54,6 +74,10 @@ export const signInWithGoogle = async () => {
       const result = await signInWithPopup(auth, provider);
       return result.user;
     } catch (error: any) {
+      // disallowed_useragent 오류 처리
+      if (error.code === 'auth/unauthorized-domain' || error.message?.includes('disallowed_useragent')) {
+        throw new Error('이 브라우저에서는 Google 로그인을 사용할 수 없습니다. 다른 브라우저에서 접속해주세요.');
+      }
       // popup이 차단된 경우 redirect로 재시도
       if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
         try {
